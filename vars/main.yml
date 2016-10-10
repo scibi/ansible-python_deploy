@@ -1,0 +1,12 @@
+---
+# vars file for debops.python_deploy
+
+python_deploy__allowed_types:
+  - 'pypi'
+  - 'git_without_setup'
+  - 'git_with_setup'
+
+python_deploy__environment_venv:
+  VIRTUAL_ENV: '{{ python_deploy__venv_path }}'
+  PATH: '{{ python_deploy__venv_path }}/bin:$PATH'
+

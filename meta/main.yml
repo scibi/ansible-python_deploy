@@ -1,0 +1,38 @@
+---
+
+dependencies:
+  - role: debops.secret
+    tags: [ 'depend::secret', 'depend::secret:python_deploy', 'depend-of::python_deploy', 'type::dependency:hard' ]
+
+  - role: debops.git_checkout
+    tags: [ 'depend::git_checkout', 'depend::git_checkout:python_deploy', 'depend-of::python_deploy', 'type::dependency' ]
+    git_checkout__name: '{{ python_deploy__name }}'
+    git_checkout__app_path: '{{ python_deploy__app_path }}'
+    git_checkout__app_home_path: '{{ python_deploy__root_path }}'
+    git_checkout__src_path: '{{ python_deploy__src_path }}'
+    git_checkout__version: '{{ python_deploy__version }}'
+    git_checkout__user: '{{ python_deploy__user }}'
+    git_checkout__group: '{{ python_deploy__group }}'
+    when: '{{ python_deploy__type in ["git_without_setup", "git_with_setup"] }}'
+
+galaxy_info:
+  author: 'Patryk Ściborek'
+  description: ''
+  company: 'DebOps'
+  license: 'GNU General Public License v3'
+  min_ansible_version: '2.1.1'
+  # There was a bug introduced in 2.1.0: https://github.com/ansible/ansible/issues/16320#issuecomment-227912789
+  platforms:
+  - name: Ubuntu
+    versions:
+    - precise
+    - quantal
+    - raring
+    - saucy
+    - trusty
+  - name: Debian
+    versions:
+    - wheezy
+    - jessie
+  categories:
+  - development

@@ -1,0 +1,116 @@
+---
+# tasks file for debops.python_deploy
+- name: 'Check if python_deploy__type is set correctly'
+  assert:
+    that:
+      - '{{ python_deploy__type in python_deploy__allowed_types }}'
+      - '{{ python_deploy__name != False }}'
+      - '{{ python_deploy__version != False }}'
+    msg: 'python_deploy__type, python_deploy__name and python_deploy__version must be set correctly'
+
+- name: Make sure home directory and its parents exists
+  file:
+    path: '{{ python_deploy__root_path }}'
+    state: 'directory'
+    recurse: 'yes'
+
+- name: 'Create {{ python_deploy__group }} group'
+  group:
+    name: '{{ python_deploy__group }}'
+    system: True
+    state: 'present'
+
+- name: 'Create {{ python_deploy__user }} user'
+  user:
+    name: '{{ python_deploy__user }}'
+    group: '{{ python_deploy__group }}'
+    home: '{{ python_deploy__root_path }}'
+    comment: '{{ python_deploy__name }}'
+    generate_ssh_key: True
+    append: True
+    system: True
+    state: 'present'
+
+- name: Set owner and permissions of home dir
+  file:
+    path: '{{ python_deploy__root_path }}'
+    state: 'directory'
+    owner: '{{ python_deploy__user }}'
+    group: '{{ python_deploy__group }}'
+    mode: '0755'
+
+- name: 'Change shell to /bin/bash'
+  user:
+    name: '{{ python_deploy__user }}'
+    shell: '/bin/bash'
+
+- name: Create required directories
+  file:
+    path: '{{ item }}'
+    state: 'directory'
+    owner: '{{ python_deploy__user }}'
+    group: '{{ python_deploy__group }}'
+    mode: '0750'
+  with_items:
+    - '{{ python_deploy__root_path }}/bin'
+    - '{{ python_deploy__root_path }}/env.d'
+
+- name: Install configuration files
+  template:
+    src: 'app/{{ item }}.j2'
+    dest: '{{ python_deploy__root_path }}/{{ item }}'
+    owner: '{{ python_deploy__user }}'
+    group: '{{ python_deploy__group }}'
+    mode: '0640'
+  with_items:
+    - 'env.d/virtualenv.conf'
+    - 'env.d/environment.conf'
+    - '.profile'
+    - '.bashrc'
+
+- name: Install configuration scripts
+  template:
+    src: 'app/{{ item }}.j2'
+    dest: '{{ python_deploy__root_path }}/{{ item }}'
+    owner: '{{ python_deploy__user }}'
+    group: '{{ python_deploy__group }}'
+    mode: '0750'
+  with_items:
+    - 'bin/setup_environment.sh'
+
+- name: Install required packages
+  apt:
+    name: '{{ item.name }}'
+    state: 'present'
+    install_recommends: False
+  when: '{{ item.enabled|d(True) }}'
+  with_flattened:
+    - '{{ python_deploy__packages_base }}'
+    - '{{ python_deploy__packages_dependent }}'
+
+- name: 'Install Python package ({{ python_deploy__pypi_package_name }})'
+  pip:
+    name: '{{ python_deploy__pypi_package_name }}'
+    version: '{{ python_deploy__version }}'
+    virtualenv: '{{ python_deploy__venv_path }}'
+    virtualenv_python: '{{ python_deploy__python }}'
+  become_user: '{{ python_deploy__user }}'
+  when: '{{ python_deploy__type == "pypi"}}'
+
+- name: 'Install requirements'
+  pip:
+    requirements: '{{ python_deploy__app_path }}/{{ item }}'
+    virtualenv: '{{ python_deploy__venv_path }}'
+    virtualenv_python: '{{ python_deploy__python }}'
+  become_user: '{{ python_deploy__user }}'
+  with_items: '{{ python_deploy__requirements_files }}'
+  when: '{{ python_deploy__type == "git_without_setup"}}'
+
+#- name: Install Python packages
+#  pip:
+#    requirements: '{{ django_app__app_path }}/{{ item }}'
+#    virtualenv: '{{ django_app__venv_path }}'
+#    virtualenv_python: '{{ django_app__python }}'
+#  become_user: '{{ django_app__user }}'
+#  with_items: '{{ django_app__requirements_files }}'
+#  when: '{{ django_app__requirements_type == "requirements.txt" }}'
