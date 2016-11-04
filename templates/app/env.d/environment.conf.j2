@@ -1,6 +1,6 @@
 # {{ ansible_managed }}
 
-# based on django_app__environment:
+# based on python_deploy__environment:
 
 {% for key, value in python_deploy__environment.iteritems() %}
 {{ key }}="{{ value }}"

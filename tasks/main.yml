@@ -88,6 +88,15 @@
     - '{{ python_deploy__packages_base }}'
     - '{{ python_deploy__packages_dependent }}'
 
+- name: Upgrade pip if needed
+  pip:
+    name: 'pip'
+    state: 'latest'
+    virtualenv: '{{ python_deploy__venv_path }}'
+    virtualenv_python: '{{ python_deploy__python }}'
+  become_user: '{{ python_deploy__user }}'
+  when: '{{ python_deploy__upgrade_pip }}'
+
 - name: 'Install Python package ({{ python_deploy__pypi_package_name }})'
   pip:
     name: '{{ python_deploy__pypi_package_name }}'

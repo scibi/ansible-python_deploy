@@ -41,6 +41,7 @@ python_deploy__environment: {}
 # Dla typu pypi
 python_deploy__pypi_package_name: '{{ python_deploy__name }}'
 
-# Dal typu git_without_setup
+# Dla typu git_without_setup
 python_deploy__requirements_files: [ 'requirements.txt' ]
 
+python_deploy__upgrade_pip: False
