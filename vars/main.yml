@@ -8,5 +8,5 @@ python_deploy__allowed_types:
 
 python_deploy__environment_venv:
   VIRTUAL_ENV: '{{ python_deploy__venv_path }}'
-  PATH: '{{ python_deploy__venv_path }}/bin:$PATH'
+  PATH: '{{ python_deploy__venv_path }}/bin:/usr/local/bin:/usr/bin:/bin'
 
