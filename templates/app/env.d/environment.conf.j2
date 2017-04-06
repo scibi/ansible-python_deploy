@@ -3,5 +3,5 @@
 # based on python_deploy__environment:
 
 {% for key, value in python_deploy__environment.iteritems() %}
-{{ key }}="{{ value }}"
+{{ key }}='{{ value }}'
 {% endfor %}
