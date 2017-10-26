@@ -28,12 +28,23 @@ python_deploy__packages_base:
   - name: 'virtualenv'
   - name: 'python-pip'
   - name: 'build-essential'
-  - name: 'python-dev'
+  - name: 'python2.7-dev'
     enabled: '{{ python_deploy__python == "python2.7" }}'
-  - name: 'python3-dev'
-    enabled: '{{ python_deploy__python != "python2.7" }}'
-
+  - name: 'python3.4-dev'
+    enabled: '{{ python_deploy__python == "python3.4" }}'
+  - name: 'python3.5-dev'
+    enabled: '{{ python_deploy__python == "python3.5" }}'
+  - name: 'pypy'
+    enabled: '{{ python_deploy__python == "pypy" }}'
+  - name: 'pypy-dev'
+    enabled: '{{ python_deploy__python == "pypy" }}'
 python_deploy__packages_dependent: []
+
+# Wspierane wersje
+# python2.7
+# python3.4
+# python3.5
+# pypy
 python_deploy__python: 'python2.7'
 
 python_deploy__environment: {}
