@@ -13,7 +13,7 @@ dependencies:
     git_checkout__version: '{{ python_deploy__version }}'
     git_checkout__user: '{{ python_deploy__user }}'
     git_checkout__group: '{{ python_deploy__group }}'
-    when: '{{ python_deploy__type in ["git_without_setup", "git_with_setup"] }}'
+    when: python_deploy__type in ["git_without_setup", "git_with_setup"]
 
 galaxy_info:
   author: 'Patryk Ściborek'
