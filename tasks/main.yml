@@ -67,6 +67,7 @@
     - 'env.d/environment.conf'
     - '.profile'
     - '.bashrc'
+# TODO: W razie zmiany konfiguracji trzeba zrestartować usługi...
 
 - name: Install configuration scripts
   template:
