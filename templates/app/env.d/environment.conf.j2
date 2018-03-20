@@ -3,5 +3,18 @@
 # based on python_deploy__environment:
 
 {% for key, value in python_deploy__environment.iteritems() %}
+{%   if value is string %}
+# String
 {{ key }}='{{ value }}'
+{%   elif value is mapping %}
+# Mapping
+{%     if value['enabled']|d(False) %}
+{{ key }}='{{ value['value'] }}'
+{%     else %}
+# "{{ key }}" is disabled
+{%     endif %}
+{%   else %}
+# Other type
+{{ key }}='{{ value }}'
+{%   endif %}
 {% endfor %}
