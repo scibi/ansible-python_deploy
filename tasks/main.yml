@@ -84,7 +84,7 @@
     name: '{{ item.name }}'
     state: 'present'
     install_recommends: False
-  when: '{{ item.enabled|d(True) }}'
+  when: item.enabled|d(True)
   with_flattened:
     - '{{ python_deploy__packages_base }}'
     - '{{ python_deploy__packages_dependent }}'
@@ -96,7 +96,7 @@
     virtualenv: '{{ python_deploy__venv_path }}'
     virtualenv_python: '{{ python_deploy__python }}'
   become_user: '{{ python_deploy__user }}'
-  when: '{{ python_deploy__upgrade_pip }}'
+  when: python_deploy__upgrade_pip
 
 - name: 'Install Python package ({{ python_deploy__pypi_package_name }})'
   pip:
@@ -105,7 +105,7 @@
     virtualenv: '{{ python_deploy__venv_path }}'
     virtualenv_python: '{{ python_deploy__python }}'
   become_user: '{{ python_deploy__user }}'
-  when: '{{ python_deploy__type == "pypi"}}'
+  when: python_deploy__type == "pypi"
 
 - name: 'Install requirements'
   pip:
@@ -114,7 +114,7 @@
     virtualenv_python: '{{ python_deploy__python }}'
   become_user: '{{ python_deploy__user }}'
   with_items: '{{ python_deploy__requirements_files }}'
-  when: '{{ python_deploy__type == "git_without_setup"}}'
+  when: python_deploy__type == "git_without_setup"
 
 #- name: Install Python packages
 #  pip:
