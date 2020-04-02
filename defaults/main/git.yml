@@ -1,0 +1,28 @@
+---
+# .. vim: foldmarker=[[[,]]]:foldmethod=marker
+
+# .. _python_deploy__ref_paths:
+
+# Paths
+# ===========
+
+# .. envvar:: python_deploy__git_verify_commit [[[
+#
+# FIXME
+python_deploy__git_verify_commit: False
+                                                                   # ]]]
+# .. envvar:: python_deploy__git_service_access_token_path [[[
+#
+# FIXME
+python_deploy__git_service_access_token_path: '{{ secret + "/python_deploy/" + python_deploy__name + "/access_token" }}'
+                                                                   # ]]]
+# .. envvar:: python_deploy__git_service_access_token [[[
+#
+# FIXME
+python_deploy__git_service_access_token: '{{ lookup("file", python_deploy__git_service_access_token_path) }}'
+                                                                   # ]]]
+# .. envvar:: python_deploy__git_url [[[
+#
+# FIXME
+python_deploy__git_url: '{{ "https://" + python_deploy__git_service_access_token + "@" + python_deploy__git_service_host + "/" + python_deploy__git_service_account + "/" + python_deploy__git_service_repo }}'
+                                                                   # ]]]

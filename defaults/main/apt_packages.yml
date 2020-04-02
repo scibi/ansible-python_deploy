@@ -1,0 +1,79 @@
+---
+# .. vim: foldmarker=[[[,]]]:foldmethod=marker
+
+# .. _python_deploy__ref_apt_packages:
+
+# APT packages
+# ===========
+
+# The ``python_deploy__*_apt_packages`` default variables define what APT packages should
+# be installed by the :ref:`debops.python_deploy` role.
+
+# .. Check the role documentation for examples and configuration syntax.
+
+# .. contents::
+#    :local:
+#
+# .. include:: ../../../../../includes/global.rst
+
+# .. include:: ../../includes/defaults-packages.rst
+
+# Default variables
+# -----------------
+
+# .. envvar:: python_deploy__default_apt_packages [[[
+#
+# List of default APT packages to install, defined by the role.
+python_deploy__default_apt_packages:
+
+  - name: 'virtualenv'
+  - name: 'python-pip'
+  - name: 'build-essential'
+  - name: 'python2.7-dev'
+    state: '{{ "present" if python_deploy__python == "python2.7" else "ignore" }}'
+  - name: 'python3.4-dev'
+    state: '{{ "present" if python_deploy__python == "python3.4" else "ignore" }}'
+  - name: 'python3.5-dev'
+    state: '{{ "present" if python_deploy__python == "python3.5" else "ignore" }}'
+  - name: 'python3.7-dev'
+    state: '{{ "present" if python_deploy__python == "python3.7" else "ignore" }}'
+  - name: 'pypy'
+    state: '{{ "present" if python_deploy__python == "pypy" else "ignore" }}'
+  - name: 'pypy-dev'
+    state: '{{ "present" if python_deploy__python == "pypy" else "ignore" }}'
+                                                                   # ]]]
+# .. envvar:: python_deploy__apt_packages [[[
+#
+# List of APT packages to install on all hosts in Ansible inventory.
+python_deploy__apt_packages: []
+
+                                                                   # ]]]
+# .. envvar:: python_deploy__group_apt_packages [[[
+#
+# List of APT packages to install on a group of hosts in Ansible inventory.
+python_deploy__group_apt_packages: []
+
+                                                                   # ]]]
+# .. envvar:: python_deploy__host_apt_packages [[[
+#
+# List of APT packages to install on specific hosts in Ansible inventory.
+python_deploy__host_apt_packages: []
+
+                                                                   # ]]]
+# .. envvar:: python_deploy__dependent_apt_packages [[[
+#
+# List of APT packages to install specified by other Ansible roles.
+python_deploy__dependent_apt_packages: []
+
+                                                                   # ]]]
+# .. envvar:: python_deploy__combined_apt_packages [[[
+#
+# List of APT packages which combines all other lists and is used in the role
+# tasks.
+python_deploy__combined_apt_packages: '{{ python_deploy__default_apt_packages
+                               + python_deploy__dependent_apt_packages
+                               + python_deploy__apt_packages
+                               + python_deploy__group_apt_packages
+                               + python_deploy__host_apt_packages }}'
+
+                                                                   # ]]]

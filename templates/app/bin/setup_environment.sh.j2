@@ -2,7 +2,7 @@
 
 tmpfile=`mktemp`
 
-for f in {{ python_deploy__root_path }}/env.d/*.conf; do
+for f in {{ python_deploy__path_root }}/env.d/*.conf; do
 	sed -e 's,^#.*,,' $f | grep -v '^$' | sed -e 's,^,export ,' >> $tmpfile
 done
 

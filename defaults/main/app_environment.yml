@@ -1,0 +1,64 @@
+---
+# .. vim: foldmarker=[[[,]]]:foldmethod=marker
+
+# .. _python_deploy__ref_app_environment:
+
+# Application environment 
+# ===========
+
+# The ``python_deploy__*_app_environment`` default variables define what evnironement variables should
+# be set by the :ref:`debops.python_deploy` role.
+
+# .. Check the role documentation for examples and configuration syntax.
+
+# .. contents::
+#    :local:
+#
+# .. include:: ../../../../../includes/global.rst
+
+# .. include:: ../../includes/defaults-packages.rst
+
+# Default variables
+# -----------------
+
+# .. envvar:: python_deploy__default_app_environment [[[
+#
+# List of default environment variables to set, defined by the role.
+python_deploy__default_app_environment: []
+
+                                                                   # ]]]
+# .. envvar:: python_deploy__app_environment [[[
+#
+# List of environment variables to set on all hosts in Ansible inventory.
+python_deploy__app_environment: []
+
+                                                                   # ]]]
+# .. envvar:: python_deploy__group_app_environment [[[
+#
+# List of environment variables to set on a group of hosts in Ansible inventory.
+python_deploy__group_app_environment: []
+
+                                                                   # ]]]
+# .. envvar:: python_deploy__host_app_environment [[[
+#
+# List of environment variables to set on specific hosts in Ansible inventory.
+python_deploy__host_app_environment: []
+
+                                                                   # ]]]
+# .. envvar:: python_deploy__dependent_app_environment [[[
+#
+# List of environment variables to set specified by other Ansible roles.
+python_deploy__dependent_app_environment: []
+
+                                                                   # ]]]
+# .. envvar:: python_deploy__combined_app_environment [[[
+#
+# List of environment variables which combines all other lists and is used in the role
+# tasks.
+python_deploy__combined_app_environment: '{{ python_deploy__default_app_environment
+                               + python_deploy__dependent_app_environment
+                               + python_deploy__app_environment
+                               + python_deploy__group_app_environment
+                               + python_deploy__host_app_environment }}'
+
+                                                                   # ]]]

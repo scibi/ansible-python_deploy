@@ -1,0 +1,38 @@
+---
+# defaults file for debops.python_deploy
+
+# Dopuszczalne typy:
+# pypi               - pakiet instalowany bezpośrednio z pypi
+# git_without_setup  - pakiet instalowany z gita, przeznaczony do uruchamiania w miejscu
+# git_with_setup     - pakiet instalowany z gita, odpalany jest setup.py
+
+python_deploy__type: False
+python_deploy__name: False
+python_deploy__version: False
+
+python_deploy__user: '{{ python_deploy__name }}'
+python_deploy__group: '{{ python_deploy__name }}'
+
+
+# Wspierane wersje
+# python2.7
+# python3.4
+# python3.5
+# python3.7
+# pypy
+python_deploy__python: 'python2.7'
+
+# Dla typu pypi
+python_deploy__pypi_package_name: '{{ python_deploy__name }}'
+
+# Dla typu git_without_setup
+python_deploy__requirements_files: [ 'requirements.txt' ]
+
+python_deploy__upgrade_pip: False
+
+python_deploy__git_verify_commit: False
+python_deploy__git_service_access_token_path: '{{ secret + "/python_deploy/" + python_deploy__name + "/access_token" }}'
+python_deploy__git_service_access_token: '{{ lookup("file", python_deploy__git_service_access_token_path) }}'
+python_deploy__git_url: '{{ "https://" + python_deploy__git_service_access_token + "@" + python_deploy__git_service_host + "/" + python_deploy__git_service_account + "/" + python_deploy__git_service_repo }}'
+
+python_deploy__notify: []

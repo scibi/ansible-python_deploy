@@ -1,4 +1,31 @@
 ---
+# .. vim: foldmarker=[[[,]]]:foldmethod=marker
+
+- import_role:
+    name: 'ansible_plugins'
+
+- import_role:
+    name: 'secret'
+
+- name: test python_deploy__combined_apt_packages
+  debug:
+    msg: '{{ python_deploy__combined_apt_packages }}'
+
+- name: test python_deploy__combined_apt_packages
+  debug:
+    msg: '{{ python_deploy__combined_apt_packages | parse_kv_items | map(attribute="name") | list }}'
+
+- name: test python_deploy__combined_app_environment
+  debug:
+    msg: '{{ python_deploy__combined_app_environment }}'
+
+- fail:
+    msg: Debugowanie
+# DebOps pre-hook [[[1
+- name: Pre hooks
+  include: '{{ lookup("task_src", "python_deploy/pre_main.yml") }}'
+
+
 # tasks file for debops.python_deploy
 - name: 'Check if python_deploy__type is set correctly'
   assert:
@@ -10,7 +37,7 @@
 
 - name: Make sure home directory and its parents exists
   file:
-    path: '{{ python_deploy__root_path }}'
+    path: '{{ python_deploy__path_root }}'
     state: 'directory'
     recurse: 'yes'
 
@@ -24,7 +51,7 @@
   user:
     name: '{{ python_deploy__user }}'
     group: '{{ python_deploy__group }}'
-    home: '{{ python_deploy__root_path }}'
+    home: '{{ python_deploy__path_root }}'
     comment: '{{ python_deploy__name }}'
     generate_ssh_key: True
     append: True
@@ -33,7 +60,7 @@
 
 - name: Set owner and permissions of home dir
   file:
-    path: '{{ python_deploy__root_path }}'
+    path: '{{ python_deploy__path_root }}'
     state: 'directory'
     owner: '{{ python_deploy__user }}'
     group: '{{ python_deploy__group }}'
@@ -52,13 +79,17 @@
     group: '{{ python_deploy__group }}'
     mode: '0750'
   with_items:
-    - '{{ python_deploy__root_path }}/bin'
-    - '{{ python_deploy__root_path }}/env.d'
+    - '{{ python_deploy__path_root }}/bin'
+    - '{{ python_deploy__path_root }}/env.d'
+
+- import_tasks: git_checkout.yml
+  when: python_deploy__type == "git_without_setup" or python_deploy__type == "git_with_setup"
+
 
 - name: Install configuration files
   template:
     src: 'app/{{ item }}.j2'
-    dest: '{{ python_deploy__root_path }}/{{ item }}'
+    dest: '{{ python_deploy__path_root }}/{{ item }}'
     owner: '{{ python_deploy__user }}'
     group: '{{ python_deploy__group }}'
     mode: '0640'
@@ -67,33 +98,29 @@
     - 'env.d/environment.conf'
     - '.profile'
     - '.bashrc'
-# TODO: W razie zmiany konfiguracji trzeba zrestartować usługi...
+  notify: '{{ python_deploy__notify if python_deploy__notify|d() else omit }}'
 
 - name: Install configuration scripts
   template:
     src: 'app/{{ item }}.j2'
-    dest: '{{ python_deploy__root_path }}/{{ item }}'
+    dest: '{{ python_deploy__path_root }}/{{ item }}'
     owner: '{{ python_deploy__user }}'
     group: '{{ python_deploy__group }}'
     mode: '0750'
   with_items:
     - 'bin/setup_environment.sh'
 
-- name: Install required packages
+- name: Install required APT packages
   apt:
-    name: '{{ item.name }}'
+    name: '{{ python_deploy__combined_apt_packages | parse_kv_items | map(attribute="name") | list }}'
     state: 'present'
     install_recommends: False
-  when: item.enabled|d(True)
-  with_flattened:
-    - '{{ python_deploy__packages_base }}'
-    - '{{ python_deploy__packages_dependent }}'
 
 - name: Upgrade pip if needed
   pip:
     name: 'pip'
     state: 'latest'
-    virtualenv: '{{ python_deploy__venv_path }}'
+    virtualenv: '{{ python_deploy__path_venv }}'
     virtualenv_python: '{{ python_deploy__python }}'
   become_user: '{{ python_deploy__user }}'
   when: python_deploy__upgrade_pip
@@ -102,19 +129,21 @@
   pip:
     name: '{{ python_deploy__pypi_package_name }}'
     version: '{{ python_deploy__version }}'
-    virtualenv: '{{ python_deploy__venv_path }}'
+    virtualenv: '{{ python_deploy__path_venv }}'
     virtualenv_python: '{{ python_deploy__python }}'
   become_user: '{{ python_deploy__user }}'
   when: python_deploy__type == "pypi"
+  notify: '{{ python_deploy__notify if python_deploy__notify|d() else omit }}'
 
 - name: 'Install requirements'
   pip:
-    requirements: '{{ python_deploy__app_path }}/{{ item }}'
-    virtualenv: '{{ python_deploy__venv_path }}'
+    requirements: '{{ python_deploy__path_app }}/{{ item }}'
+    virtualenv: '{{ python_deploy__path_venv }}'
     virtualenv_python: '{{ python_deploy__python }}'
   become_user: '{{ python_deploy__user }}'
   with_items: '{{ python_deploy__requirements_files }}'
   when: python_deploy__type == "git_without_setup"
+  notify: '{{ python_deploy__notify if python_deploy__notify|d() else omit }}'
 
 #- name: Install Python packages
 #  pip:
@@ -124,3 +153,8 @@
 #  become_user: '{{ django_app__user }}'
 #  with_items: '{{ django_app__requirements_files }}'
 #  when: '{{ django_app__requirements_type == "requirements.txt" }}'
+
+# DebOps post-hook [[[1
+- name: Post hooks
+  include: '{{ lookup("task_src", "python_deploy/post_main.yml") }}'
+

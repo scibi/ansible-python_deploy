@@ -1,0 +1,35 @@
+---
+
+- name: Sample for python deploy role
+  hosts: [ 'debops_service_python_deploy' ]
+  become: True
+
+  environment: '{{ inventory__environment | d({})
+                   | combine(inventory__group_environment | d({}))
+                   | combine(inventory__host_environment  | d({})) }}'
+
+  roles:
+
+    # aplikacja
+    - role: debops.python_deploy
+      tags: [ 'role::python_deploy' ]
+      python_deploy__type: 'git_without_setup'
+      python_deploy__name: 'project_name'
+      python_deploy__version: 'master'
+
+      python_deploy__user: 'user_name'
+      python_deploy__group: 'group_name'
+
+      python_deploy__requirements_files:
+        - 'requirements/requirements.txt'
+      python_deploy__upgrade_pip: True
+      
+      python_deploy__python: 'python3.7'
+      
+      python_deploy__git_service_host: 'gitlab.test.com'
+      python_deploy__git_service_account: 'group_name'
+      python_deploy__git_service_repo: 'project_name'
+      python_deploy__git_service_access_token: 'username:password'
+      python_deploy__git_service_ssh_key: 'github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ=='
+      python_deploy__git_submodules_enable: False
+

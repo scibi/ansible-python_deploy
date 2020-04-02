@@ -1,0 +1,24 @@
+---
+
+- name: Make sure git is installed
+  apt:
+    name: 'git'
+    state: 'latest'
+    install_recommends: False
+
+- name: Clone source from repository
+  git:
+    repo: '{{ python_deploy__git_url }}'
+    dest: '{{ python_deploy__path_app }}'
+    version: '{{ python_deploy__version }}'
+    separate_git_dir: '{{ python_deploy__path_git }}'
+    verify_commit: '{{ python_deploy__git_verify_commit }}'
+  become: True
+  become_user: '{{ python_deploy__user }}'
+  register: python_deploy__register_git
+  notify: '{{ python_deploy__notify if python_deploy__notify|d() else omit }}'
+
+- name: python_deploy__register_git
+  debug:
+    msg: '{{ python_deploy__register_git }}'
+

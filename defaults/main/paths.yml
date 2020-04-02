@@ -1,0 +1,54 @@
+---
+# .. vim: foldmarker=[[[,]]]:foldmethod=marker
+
+# .. _python_deploy__ref_paths:
+
+# Paths
+# ===========
+
+# .. envvar:: python_deploy__path_root [[[
+#
+# Root path where the application is installed
+python_deploy__path_root: '{{ ansible_local.root.app + "/" + python_deploy__name}}'
+                                                                   # ]]]
+
+# .. envvar:: python_deploy__default_dir_venv [[[
+#
+# Directory where virtual environment is created
+python_deploy__default_dir_venv: 'venv'
+                                                                   # ]]]
+
+# .. envvar:: python_deploy__path_venv [[[
+#
+# Full path where virtual environment is created
+python_deploy__path_venv: '{{ python_deploy__path_root + "/" + python_deploy__default_dir_venv }}'
+                                                                   # ]]]
+
+# .. envvar:: python_deploy__default_dir_app [[[
+#
+# Directory where application code is deployed (git working tree)
+python_deploy__default_dir_app: 'app'
+                                                                   # ]]]
+
+# .. envvar:: python_deploy__path_app [[[
+#
+# Full path where application code is deployed (git working tree)
+python_deploy__path_app: '{{ python_deploy__path_root + "/" + python_deploy__default_dir_app }}'
+                                                                   # ]]]
+
+# .. envvar:: python_deploy__default_dir_git [[[
+#
+# Directory where git repository is cloned
+python_deploy__default_dir_git: 'git'
+                                                                   # ]]]
+
+# .. envvar:: python_deploy__path_git [[[
+#
+# Full path where git repository is cloned
+python_deploy__path_git: '{{ python_deploy__path_root + "/" + python_deploy__default_dir_git }}'
+                                                                   # ]]]
+
+
+
+
+
