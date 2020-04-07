@@ -7,6 +7,6 @@ python_deploy__allowed_types:
   - 'git_with_setup'
 
 python_deploy__environment_venv:
-  VIRTUAL_ENV: '{{ python_deploy__venv_path }}'
-  PATH: '{{ python_deploy__venv_path }}/bin:/usr/local/bin:/usr/bin:/bin'
+  VIRTUAL_ENV: '{{ python_deploy__path_venv }}'
+  PATH: '{{ python_deploy__path_venv }}/bin:/usr/local/bin:/usr/bin:/bin'
 
