@@ -1,20 +1,12 @@
 # {{ ansible_managed }}
 
-# based on python_deploy__environment:
-
-{% for key, value in python_deploy__environment.iteritems() %}
-{%   if value is string %}
-# String
-{{ key }}='{{ value }}'
-{%   elif value is mapping %}
-# Mapping
-{%     if value['enabled']|d(False) %}
-{{ key }}='{{ value['value'] }}'
-{%     else %}
-# "{{ key }}" is disabled
-{%     endif %}
+{% for item in python_deploy__combined_app_environment | parse_kv_items %}
+{%   if item.comment|d() %}
+{{ item.comment | regex_replace('\n$','') | comment() }}
+{%   endif %}
+{%   if item.state|d('present') not in [ 'absent', 'ignore' ] %}
+{{ item.name }}='{{ item.value }}'
 {%   else %}
-# Other type
-{{ key }}='{{ value }}'
+# {{ item.name }} is disabled
 {%   endif %}
 {% endfor %}

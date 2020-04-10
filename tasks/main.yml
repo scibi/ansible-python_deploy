@@ -19,8 +19,12 @@
   debug:
     msg: '{{ python_deploy__combined_app_environment }}'
 
-- fail:
-    msg: Debugowanie
+- name: test python_deploy__combined_app_environment + parse_kv_items
+  debug:
+    msg: '{{ python_deploy__combined_app_environment | parse_kv_items }}'
+
+#- fail:
+#    msg: Debugowanie
 # DebOps pre-hook [[[1
 - name: Pre hooks
   include: '{{ lookup("task_src", "python_deploy/pre_main.yml") }}'
