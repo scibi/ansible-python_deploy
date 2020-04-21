@@ -3,7 +3,7 @@
 - name: Make sure git is installed
   apt:
     name: 'git'
-    state: 'latest'
+    state: 'present'
     install_recommends: False
 
 - name: Clone source from repository

@@ -1,0 +1,28 @@
+# {{ ansible_managed }}
+
+[Unit]
+Description={{ item.description|d(item.name) }}
+After=network.target
+
+[Service]
+User={{ python_deploy__user }}
+Group={{ python_deploy__group }}
+WorkingDirectory={{ python_deploy__path_app }}
+EnvironmentFile={{ python_deploy__path_root }}/env.d/*.conf
+
+ExecStart={{ python_deploy__path_venv}}/bin/python \
+    {{ item.script_path }} \
+{% if item.script_options %}
+{%   for opt in item.script_options|d([]) %}
+    {{ opt }} \
+{%   endfor %}
+{% endif %}
+
+PrivateTmp=true
+{% if item.restart|d(python_deploy__service_default_restart)|d(False) %}
+Restart={{ item.restart|d(python_deploy__service_default_restart) }}
+{% endif %}
+
+[Install]
+WantedBy=multi-user.target
+

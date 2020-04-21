@@ -23,6 +23,14 @@
   debug:
     msg: '{{ python_deploy__combined_app_environment | parse_kv_items }}'
 
+- name: test python_deploy__combined_services
+  debug:
+    msg: '{{ python_deploy__combined_services }}'
+
+- name: test python_deploy__combined_services + parse_kv_items
+  debug:
+    msg: '{{ python_deploy__combined_services | parse_kv_items }}'
+
 #- fail:
 #    msg: Debugowanie
 # DebOps pre-hook [[[1
@@ -126,6 +134,7 @@
     state: 'latest'
     virtualenv: '{{ python_deploy__path_venv }}'
     virtualenv_python: '{{ python_deploy__python }}'
+  become: yes
   become_user: '{{ python_deploy__user }}'
   when: python_deploy__upgrade_pip
 
@@ -135,6 +144,7 @@
     version: '{{ python_deploy__version }}'
     virtualenv: '{{ python_deploy__path_venv }}'
     virtualenv_python: '{{ python_deploy__python }}'
+  become: yes
   become_user: '{{ python_deploy__user }}'
   when: python_deploy__type == "pypi"
   notify: '{{ python_deploy__notify if python_deploy__notify|d() else omit }}'
@@ -144,6 +154,7 @@
     requirements: '{{ python_deploy__path_app }}/{{ item }}'
     virtualenv: '{{ python_deploy__path_venv }}'
     virtualenv_python: '{{ python_deploy__python }}'
+  become: yes
   become_user: '{{ python_deploy__user }}'
   with_items: '{{ python_deploy__requirements_files }}'
   when: python_deploy__type == "git_without_setup"
@@ -157,6 +168,8 @@
 #  become_user: '{{ django_app__user }}'
 #  with_items: '{{ django_app__requirements_files }}'
 #  when: '{{ django_app__requirements_type == "requirements.txt" }}'
+
+- include: services.yml
 
 # DebOps post-hook [[[1
 - name: Post hooks

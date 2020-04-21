@@ -1,0 +1,71 @@
+---
+# .. vim: foldmarker=[[[,]]]:foldmethod=marker
+
+# .. _python_deploy__ref_services:
+
+# Services
+# ===========
+
+# The ``python_deploy__*_services`` default variables define what systemd services should
+# be set by the :ref:`debops.python_deploy` role.
+
+# .. Check the role documentation for examples and configuration syntax.
+
+# .. contents::
+#    :local:
+#
+# .. include:: ../../../../../includes/global.rst
+
+# .. include:: ../../includes/defaults-packages.rst
+
+# Default variables
+# -----------------
+
+# .. envvar:: python_deploy__default_services [[[
+#
+# List of default services to set up, defined by the role.
+python_deploy__default_services: []
+
+                                                                   # ]]]
+# .. envvar:: python_deploy__services [[[
+#
+# List of services to set on all hosts in Ansible inventory.
+python_deploy__services: []
+
+                                                                   # ]]]
+# .. envvar:: python_deploy__group_services [[[
+#
+# List of services to set up on a group of hosts in Ansible inventory.
+python_deploy__group_services: []
+
+                                                                   # ]]]
+# .. envvar:: python_deploy__host_services [[[
+#
+# List of services to set up on specific hosts in Ansible inventory.
+python_deploy__host_services: []
+
+                                                                   # ]]]
+# .. envvar:: python_deploy__dependent_services [[[
+#
+# List of services to set up specified by other Ansible roles.
+python_deploy__dependent_services: []
+
+                                                                   # ]]]
+# .. envvar:: python_deploy__combined_services [[[
+#
+# List of services to set up which combines all other lists and is used in the role
+# tasks.
+python_deploy__combined_services: '{{ python_deploy__default_services
+                               + python_deploy__dependent_services
+                               + python_deploy__services
+                               + python_deploy__group_services
+                               + python_deploy__host_services }}'
+
+                                                                   # ]]]
+                                                                   #
+# .. envvar:: python_deploy__service_default_restart [[[
+#
+# Default value of `Restart` option in service file.
+python_deploy__service_default_restart: 'on-failure'
+
+                                                                   # ]]]

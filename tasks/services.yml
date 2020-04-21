@@ -1,0 +1,49 @@
+---
+
+- name: Install service files
+  template:
+    src: 'systemd_services/{{ item.type }}.service.j2'
+    dest: '/etc/systemd/system/{{ item.name }}.service'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  with_items: '{{ python_deploy__combined_services | parse_kv_items }}'
+  when: ansible_service_mgr == 'systemd' and item.name|d() and
+        item.state|d('present') not in [ 'absent', 'ignore' ]
+  register: captive_portal__register_systemd_install
+
+- name: Stop services if requested
+  systemd:
+    name: '{{ item.name }}.service'
+    state: 'stopped'
+    enabled: False
+  with_items: '{{ python_deploy__combined_services | parse_kv_items }}'
+  when: ansible_service_mgr == 'systemd' and item.name|d() and
+        item.state|d('present') in [ 'stopped']
+
+- name: Remove service files if requested
+  file:
+    path: '/etc/systemd/system/{{ item.name }}.service'
+    state: 'absent'
+  with_items: '{{ python_deploy__combined_services | parse_kv_items }}'
+  register: captive_portal__register_systemd_remove
+  when: ansible_service_mgr == 'systemd' and item.name|d() and
+        item.state|d('present') == 'absent'
+
+- name: Reload systemd configuration when needed
+  systemd:
+    daemon_reload: True
+  when: (ansible_service_mgr == 'systemd' and
+         (captive_portal__register_systemd_install is changed or
+          captive_portal__register_systemd_remove is changed))
+
+- name: Ensure that instances are started
+  systemd:
+    name: '{{ item.name }}.service'
+    state: 'started'
+    enabled: True
+  with_items: '{{ python_deploy__combined_services | parse_kv_items }}'
+  when: ansible_service_mgr == 'systemd' and item.name|d() and
+        item.state|d('present') not in [ 'absent', 'ignore', 'stopped' ]
+
+
