@@ -55,17 +55,22 @@ python_deploy__dependent_services: []
 #
 # List of services to set up which combines all other lists and is used in the role
 # tasks.
-python_deploy__combined_services: '{{ python_deploy__default_services
+python_deploy__combined_services: '{{ lookup("flattened", python_deploy__default_services
                                + python_deploy__dependent_services
                                + python_deploy__services
                                + python_deploy__group_services
-                               + python_deploy__host_services }}'
+                               + python_deploy__host_services) }}'
 
                                                                    # ]]]
-                                                                   #
 # .. envvar:: python_deploy__service_default_restart [[[
 #
 # Default value of `Restart` option in service file.
 python_deploy__service_default_restart: 'on-failure'
+
+                                                                   # ]]]
+# .. envvar:: python_deploy__service_default_restart_sec [[[
+#
+# Default value of `RestartSec` option in service file.
+python_deploy__service_default_restart_sec: 5
 
                                                                    # ]]]

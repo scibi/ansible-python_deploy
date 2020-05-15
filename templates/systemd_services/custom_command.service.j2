@@ -10,10 +10,9 @@ Group={{ python_deploy__group }}
 WorkingDirectory={{ item.working_directory|d(python_deploy__path_app) }}
 EnvironmentFile={{ python_deploy__path_root }}/env.d/*.conf
 
-ExecStart={{ python_deploy__path_venv}}/bin/python \
-    {{ item.script_path }} \
-{% for opt in item.script_options|d([]) %}
-    {{ opt }}{% if not loop.last %}     \{% endif %}
+ExecStart={{ python_deploy__path_venv}}/bin/{{ item.command }}	\
+{% for opt in item.command_options|d([]) %}
+    {{ opt }}{% if not loop.last %}	\{% endif %}
 
 {% endfor %}
 ExecStop=/bin/kill -s TERM $MAINPID
@@ -29,4 +28,3 @@ PIDFile={{ item.pid_file }}
 
 [Install]
 WantedBy=multi-user.target
-
