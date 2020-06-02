@@ -35,4 +35,15 @@ python_deploy__git_service_access_token_path: '{{ secret + "/python_deploy/" + p
 python_deploy__git_service_access_token: '{{ lookup("file", python_deploy__git_service_access_token_path) }}'
 python_deploy__git_url: '{{ "https://" + python_deploy__git_service_access_token + "@" + python_deploy__git_service_host + "/" + python_deploy__git_service_account + "/" + python_deploy__git_service_repo }}'
 
+python_deploy__default_notify:
+  - 'Restart python services'
 python_deploy__notify: []
+python_deploy__group_notify: []
+python_deploy__host_notify: []
+python_deploy__dependent_notify: []
+python_deploy__combined_notify: '{{ lookup("flattened", python_deploy__default_notify
+                               + python_deploy__dependent_notify
+                               + python_deploy__notify
+                               + python_deploy__group_notify
+                               + python_deploy__host_notify) }}'
+

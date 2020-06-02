@@ -1,0 +1,9 @@
+---
+
+- name: Restart python services
+  systemd:
+    name: '{{ item.name }}.service'
+    state: 'restarted'
+  with_items: '{{ python_deploy__combined_services | parse_kv_items }}'
+  when: ansible_service_mgr == 'systemd' and item.name|d() and
+        item.state|d('present') not in [ 'absent', 'ignore', 'stopped' ]

@@ -110,7 +110,7 @@
     - 'env.d/environment.conf'
     - '.profile'
     - '.bashrc'
-  notify: '{{ python_deploy__notify if python_deploy__notify|d() else omit }}'
+  notify: '{{ python_deploy__combined_notify if python_deploy__combined_notify|d() else omit }}'
 
 - name: Install configuration scripts
   template:
@@ -147,7 +147,7 @@
   become: yes
   become_user: '{{ python_deploy__user }}'
   when: python_deploy__type == "pypi"
-  notify: '{{ python_deploy__notify if python_deploy__notify|d() else omit }}'
+  notify: '{{ python_deploy__combined_notify if python_deploy__combined_notify|d() else omit }}'
 
 - name: 'Install requirements'
   pip:
@@ -158,7 +158,7 @@
   become_user: '{{ python_deploy__user }}'
   with_items: '{{ python_deploy__requirements_files }}'
   when: python_deploy__type == "git_without_setup"
-  notify: '{{ python_deploy__notify if python_deploy__notify|d() else omit }}'
+  notify: '{{ python_deploy__combined_notify if python_deploy__combined_notify|d() else omit }}'
 
 #- name: Install Python packages
 #  pip:

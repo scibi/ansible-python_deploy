@@ -16,7 +16,7 @@
   become: True
   become_user: '{{ python_deploy__user }}'
   register: python_deploy__register_git
-  notify: '{{ python_deploy__notify if python_deploy__notify|d() else omit }}'
+  notify: '{{ python_deploy__combined_notify if python_deploy__combined_notify|d() else omit }}'
 
 - name: python_deploy__register_git
   debug:
