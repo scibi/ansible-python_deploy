@@ -11,6 +11,7 @@
   when: ansible_service_mgr == 'systemd' and item.name|d() and
         item.state|d('present') not in [ 'absent', 'ignore' ]
   register: captive_portal__register_systemd_install
+  notify: '{{ python_deploy__combined_notify if python_deploy__combined_notify|d() else omit }}'
 
 - name: Stop services if requested
   systemd:
