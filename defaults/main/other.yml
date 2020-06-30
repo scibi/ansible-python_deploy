@@ -45,5 +45,5 @@ python_deploy__combined_notify: '{{ lookup("flattened", python_deploy__default_n
                                + python_deploy__dependent_notify
                                + python_deploy__notify
                                + python_deploy__group_notify
-                               + python_deploy__host_notify) }}'
+                               + python_deploy__host_notify, wantlist=True) }}'
 

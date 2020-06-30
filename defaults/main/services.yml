@@ -59,7 +59,7 @@ python_deploy__combined_services: '{{ lookup("flattened", python_deploy__default
                                + python_deploy__dependent_services
                                + python_deploy__services
                                + python_deploy__group_services
-                               + python_deploy__host_services) }}'
+                               + python_deploy__host_services, wantlist=True) }}'
 
                                                                    # ]]]
 # .. envvar:: python_deploy__service_default_restart [[[

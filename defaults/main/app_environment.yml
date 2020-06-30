@@ -59,6 +59,6 @@ python_deploy__combined_app_environment: '{{ lookup("flattened", python_deploy__
                                + python_deploy__dependent_app_environment
                                + python_deploy__app_environment
                                + python_deploy__group_app_environment
-                               + python_deploy__host_app_environment) }}'
+                               + python_deploy__host_app_environment, wantlist=True) }}'
 
                                                                    # ]]]

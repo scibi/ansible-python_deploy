@@ -23,6 +23,10 @@
   debug:
     msg: '{{ python_deploy__combined_app_environment | parse_kv_items }}'
 
+- name: test python_deploy__dependent_services
+  debug:
+    msg: '{{ python_deploy__dependent_services }}'
+
 - name: test python_deploy__combined_services
   debug:
     msg: '{{ python_deploy__combined_services }}'
@@ -131,12 +135,11 @@
 - name: Upgrade pip if needed
   pip:
     name: 'pip'
-    state: 'latest'
+    state: '{% if python_deploy__upgrade_pip %}latest{% else %}present{% endif %}'
     virtualenv: '{{ python_deploy__path_venv }}'
     virtualenv_python: '{{ python_deploy__python }}'
   become: yes
   become_user: '{{ python_deploy__user }}'
-  when: python_deploy__upgrade_pip
 
 - name: 'Install Python package ({{ python_deploy__pypi_package_name }})'
   pip:

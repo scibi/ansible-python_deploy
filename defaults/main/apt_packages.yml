@@ -74,6 +74,6 @@ python_deploy__combined_apt_packages: '{{ lookup("flattened", python_deploy__def
                                + python_deploy__dependent_apt_packages
                                + python_deploy__apt_packages
                                + python_deploy__group_apt_packages
-                               + python_deploy__host_apt_packages) }}'
+                               + python_deploy__host_apt_packages, wantlist=True) }}'
 
                                                                    # ]]]
