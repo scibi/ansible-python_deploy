@@ -30,10 +30,6 @@ python_deploy__requirements_files: [ 'requirements.txt' ]
 
 python_deploy__upgrade_pip: False
 
-python_deploy__git_verify_commit: False
-python_deploy__git_service_access_token_path: '{{ secret + "/python_deploy/" + python_deploy__name + "/access_token" }}'
-python_deploy__git_service_access_token: '{{ lookup("file", python_deploy__git_service_access_token_path) }}'
-python_deploy__git_url: '{{ "https://" + python_deploy__git_service_access_token + "@" + python_deploy__git_service_host + "/" + python_deploy__git_service_account + "/" + python_deploy__git_service_repo }}'
 
 python_deploy__default_notify:
   - 'Restart python services'
