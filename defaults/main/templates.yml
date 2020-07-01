@@ -1,0 +1,74 @@
+---
+# .. vim: foldmarker=[[[,]]]:foldmethod=marker
+
+# .. _python_deploy__ref_templates:
+
+# APT packages
+# ===========
+
+# The ``python_deploy__*_templates`` default variables define what templates should
+# be installed by the :ref:`debops.python_deploy` role.
+
+# .. Check the role documentation for examples and configuration syntax.
+
+# .. contents::
+#    :local:
+#
+# .. include:: ../../../../../includes/global.rst
+
+# .. include:: ../../includes/defaults-packages.rst
+
+# Default variables
+# -----------------
+
+# .. envvar:: python_deploy__default_templates [[[
+#
+# List of default templates to install, defined by the role.
+python_deploy__default_templates:
+  - src: 'app/env.d/virtualenv.conf.j2'
+    dest: 'env.d/virtualenv.conf'
+  - src: 'app/env.d/environment.conf.j2'
+    dest: 'env.d/environment.conf'
+  - src: 'app/.profile.j2'
+    dest: '.profile'
+  - src: 'app/.bashrc.j2'
+    dest: '.bashrc'
+  - src: 'app/bin/setup_environment.sh.j2'
+    dest: 'bin/setup_environment.sh'
+    mode: '0750'
+                                                                   # ]]]
+# .. envvar:: python_deploy__templates [[[
+#
+# List of templates to install on all hosts in Ansible inventory.
+python_deploy__templates: []
+
+                                                                   # ]]]
+# .. envvar:: python_deploy__group_templates [[[
+#
+# List of templates to install on a group of hosts in Ansible inventory.
+python_deploy__group_templates: []
+
+                                                                   # ]]]
+# .. envvar:: python_deploy__host_templates [[[
+#
+# List of templates to install on specific hosts in Ansible inventory.
+python_deploy__host_templates: []
+
+                                                                   # ]]]
+# .. envvar:: python_deploy__dependent_templates [[[
+#
+# List of templates to install specified by other Ansible roles.
+python_deploy__dependent_templates: []
+
+                                                                   # ]]]
+# .. envvar:: python_deploy__combined_templates [[[
+#
+# List of templates which combines all other lists and is used in the role
+# tasks.
+python_deploy__combined_templates: '{{ lookup("flattened", python_deploy__default_templates
+                               + python_deploy__dependent_templates
+                               + python_deploy__templates
+                               + python_deploy__group_templates
+                               + python_deploy__host_templates, wantlist=True) }}'
+
+                                                                   # ]]]

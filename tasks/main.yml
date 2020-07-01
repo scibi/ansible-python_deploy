@@ -101,30 +101,15 @@
 - import_tasks: git_checkout.yml
   when: python_deploy__type == "git_without_setup" or python_deploy__type == "git_with_setup"
 
-
-- name: Install configuration files
+- name: Install templates
   template:
-    src: 'app/{{ item }}.j2'
-    dest: '{{ python_deploy__path_root }}/{{ item }}'
+    src: '{{ item.src }}'
+    dest: '{{ python_deploy__path_root }}/{{ item.dest }}'
     owner: '{{ python_deploy__user }}'
     group: '{{ python_deploy__group }}'
-    mode: '0640'
-  with_items:
-    - 'env.d/virtualenv.conf'
-    - 'env.d/environment.conf'
-    - '.profile'
-    - '.bashrc'
+    mode: '{{ item.mode|d("0640") }}'
+  with_items: '{{ python_deploy__combined_templates }}'
   notify: '{{ python_deploy__combined_notify if python_deploy__combined_notify|d() else omit }}'
-
-- name: Install configuration scripts
-  template:
-    src: 'app/{{ item }}.j2'
-    dest: '{{ python_deploy__path_root }}/{{ item }}'
-    owner: '{{ python_deploy__user }}'
-    group: '{{ python_deploy__group }}'
-    mode: '0750'
-  with_items:
-    - 'bin/setup_environment.sh'
 
 - name: Install required APT packages
   apt:
