@@ -9,7 +9,7 @@
 # .. envvar:: python_deploy__path_root [[[
 #
 # Root path where the application is installed
-python_deploy__path_root: '{{ ansible_local.root.app + "/" + python_deploy__name}}'
+python_deploy__path_root: '{{ ansible_local.fhs.app + "/" + python_deploy__name}}'
                                                                    # ]]]
 
 # .. envvar:: python_deploy__default_dir_venv [[[
