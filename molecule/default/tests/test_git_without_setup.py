@@ -34,8 +34,7 @@ def test_user(host):
 
 
 @pytest.mark.parametrize(
-    "file",
-    "user",
+    "file,user",
     [
         ("/var/local/test_without_setup/app/wsgi.py", "test_without_setup"),
         ("/etc/systemd/system/test-webserver.service", "root"),
