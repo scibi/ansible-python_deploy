@@ -37,7 +37,7 @@ def test_user(host):
     "file",
     "user",
     [
-        ("/var/local/test_without_setup/app.wsgi.py", "test_without_setup"),
+        ("/var/local/test_without_setup/app/wsgi.py", "test_without_setup"),
         ("/etc/systemd/system/test-webserver.service", "root"),
     ],
 )
