@@ -42,7 +42,7 @@ def test_user(host):
 )
 def test_file_owner(host, file, user):
     """Check if files have correct owner."""
-    assert host.file(file).owner == user
+    assert host.file(file).user == user
 
 
 def test_running_services(host):
