@@ -1,5 +1,5 @@
 ---
-test__app_name: 'test_without_setup'
+test__app_name: 'test'
 test__version: 'main'
 
 test__user: '{{ test__app_name }}'

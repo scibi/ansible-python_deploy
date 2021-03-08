@@ -11,12 +11,12 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 @pytest.mark.parametrize(
     "file_path",
     [
-        "/var/local/test_without_setup/app/wsgi.py",
-        "/var/local/test_without_setup/bin/setup_environment.sh",
-        "/var/local/test_without_setup/env.d/environment.conf",
-        "/var/local/test_without_setup/env.d/virtualenv.conf",
-        "/var/local/test_without_setup/git",
-        "/var/local/test_without_setup/venv",
+        "/var/local/test/app/wsgi.py",
+        "/var/local/test/bin/setup_environment.sh",
+        "/var/local/test/env.d/environment.conf",
+        "/var/local/test/env.d/virtualenv.conf",
+        "/var/local/test/git",
+        "/var/local/test/venv",
         "/etc/systemd/system/test-webserver.service",
     ],
 )
@@ -27,16 +27,16 @@ def test_file_path(host, file_path):
 
 def test_user(host):
     """Check if role created correct user"""
-    user = host.user("test_without_setup")
+    user = host.user("test")
     assert user.exists
-    assert user.group == "test_without_setup"
-    assert user.home == "/var/local/test_without_setup"
+    assert user.group == "test"
+    assert user.home == "/var/local/test"
 
 
 @pytest.mark.parametrize(
     "file,user",
     [
-        ("/var/local/test_without_setup/app/wsgi.py", "test_without_setup"),
+        ("/var/local/test/app/wsgi.py", "test"),
         ("/etc/systemd/system/test-webserver.service", "root"),
     ],
 )
@@ -52,20 +52,8 @@ def test_running_services(host):
     assert service.is_enabled
 
 
-def test_service_uses_venv(host):
-    """Check if gunicorn process runs as expected."""
-    master = host.process.get(user="test_without_setup", comm="gunicorn")
-    assert master is not None
-    assert (
-        "/var/local/test_without_setup/venv/bin/gunicorn -c gunicorn.conf.py wsgi.py"
-        in master.args
-    )
-    workers = host.process.filter(ppid=master.pid)
-    assert len(workers) == 4
-
-
 def test_webserver_response(host):
     """Check if webserver returns correct response."""
-    cmd = host.run("curl -v http://127.0.0.1:8000")
-    assert cmd.succeded
-    assert "HTTP/1.1 200 OK" in cmd.stdout
+    cmd = host.run("curl http://127.0.0.1:8000 --verbose")
+    assert cmd.succeeded
+    assert "OK" == cmd.stdout
