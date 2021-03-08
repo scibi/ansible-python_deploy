@@ -1,0 +1,53 @@
+---
+
+- name: Check if Poetry is installed
+  command: poetry -V
+  register: poetry_version_cmd
+  changed_when: False
+  ignore_errors: True
+  become: yes
+  become_user: '{{ python_deploy__user }}'
+
+- name: Install Poetry using downloaded installer
+  become: yes
+  become_user: '{{ python_deploy__user }}'
+  when: poetry_version_cmd is failed and python_deploy__poetry_install_method == "installer"
+  block:
+  - name: Download Poetry installer
+    get_url:
+      url: '{{ python_deploy__poetry_installer_url }}'
+      dest: /tmp/get-poetry.py
+      mode: '0755'
+
+  - name: Execute the get-poetry.py
+    command: python /tmp/get-poetry.py
+
+  - name: Update virtualenv template - add Poetry to PATH
+    copy:
+      dest: '{{ python_deploy__path_root }}/env.d/virtualenv.conf'
+      content: |
+        ''
+        '# Poetry installed with Ansible'
+        'PATH="$HOME/.poetry/bin/:$PATH"'
+
+  - name: Remove the get-poetry.py
+    file:
+      path: /tmp/get-poetry.py
+      state: absent
+
+- name: Install Poetry using pip
+  become: yes
+  become_user: '{{ python_deploy__user }}'
+  when: poetry_version_cmd is failed and python_deploy__poetry_install_method == "pip"
+  block:
+  - name: Update pip if needed
+    pip:
+      state: '{% if python_deploy__upgrade_pip %}latest{% else %}present{% endif %}'
+
+  - name: Install Poetry
+    become: yes
+    become_user: '{{ python_deploy__user }}'
+    when: poetry_version_cmd is failed and python_deploy__poetry_install_method == "pip"
+    pip:
+      name: 'poetry'
+      extra_args: --user

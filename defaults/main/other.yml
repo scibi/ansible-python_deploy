@@ -4,6 +4,7 @@
 # Dopuszczalne typy:
 # pypi               - pakiet instalowany bezpośrednio z pypi
 # git_without_setup  - pakiet instalowany z gita, przeznaczony do uruchamiania w miejscu
+# git_with_poetry    - pakiet instalowany z gita, przeznaczony do uruchamiania w miejscu z poetry
 # git_with_setup     - pakiet instalowany z gita, odpalany jest setup.py
 
 python_deploy__type: False
@@ -29,6 +30,10 @@ python_deploy__pypi_package_name: '{{ python_deploy__name }}'
 python_deploy__requirements_files: [ 'requirements.txt' ]
 
 python_deploy__upgrade_pip: False
+
+# Dla typu git_with_poetry
+python_deploy__poetry_install_method: 'installer'
+python_deploy__poetry_installer_url: 'https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py'
 
 
 python_deploy__default_notify:

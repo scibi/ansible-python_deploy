@@ -71,6 +71,7 @@
     comment: '{{ python_deploy__name }}'
     generate_ssh_key: True
     append: True
+    groups: sudo
     system: True
     state: 'present'
 
@@ -99,7 +100,10 @@
     - '{{ python_deploy__path_root }}/env.d'
 
 - import_tasks: git_checkout.yml
-  when: python_deploy__type == "git_without_setup" or python_deploy__type == "git_with_setup"
+  when: python_deploy__type in python_deploy__git_checkout_types
+
+- import_tasks: poetry_install.yml
+  when: python_deploy__type == "git_with_poetry"
 
 - name: Install templates
   template:
@@ -125,6 +129,7 @@
     virtualenv_python: '{{ python_deploy__python }}'
   become: yes
   become_user: '{{ python_deploy__user }}'
+  when: python_deploy__type != "git_with_poetry" or python_deploy__poetry_install_method == "pip"
 
 - name: 'Install Python package ({{ python_deploy__pypi_package_name }})'
   pip:
@@ -137,7 +142,7 @@
   when: python_deploy__type == "pypi"
   notify: '{{ python_deploy__combined_notify if python_deploy__combined_notify|d() else omit }}'
 
-- name: 'Install requirements'
+- name: 'Install requirements with pip'
   pip:
     requirements: '{{ python_deploy__path_app }}/{{ item }}'
     virtualenv: '{{ python_deploy__path_venv }}'
@@ -147,6 +152,19 @@
   with_items: '{{ python_deploy__requirements_files }}'
   when: python_deploy__type == "git_without_setup"
   notify: '{{ python_deploy__combined_notify if python_deploy__combined_notify|d() else omit }}'
+
+- name: 'Install requirements with Poetry'
+  command: 'poetry install --no-interaction --no-dev'
+  args:
+    chdir: '{{ python_deploy__path_app }}'
+  become: yes
+  become_user: '{{ python_deploy__user }}'
+  register: result
+#  changed_when: '"No dependencies to install or update" in result.stdout'
+  when: python_deploy__type == "git_with_poetry"
+  notify: '{{ python_deploy__combined_notify if python_deploy__combined_notify|d() else omit }}'
+
+- debug: var=result
 
 #- name: Install Python packages
 #  pip:

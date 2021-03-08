@@ -1,0 +1,37 @@
+---
+dependency:
+  name: galaxy
+  roles:
+    - debops.ansible_plugins
+    - debops.apt_preferences
+    - debops.apt_install
+    - debops.fhs
+    - debops.secret
+  collections:
+    - debops.debops
+    - debops.roles01
+    - debops.roles02
+    - debops.roles03
+driver:
+  name: docker
+platforms:
+  - name: debian10
+    image: jrei/systemd-debian:10
+    command: /sbin/init
+    privileged: True
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    network_mode: host
+provisioner:
+  name: ansible
+  env:
+    ANSIBLE_ROLES_PATH: "${VIRTUAL_ENV}/lib/python3.7/site-packages/debops/ansible/roles"
+  playbooks:
+    converge: converge.yml
+  options:
+    vvv: True
+  inventory:
+    links:
+      group_vars: inventory/group_vars/
+verifier:
+  name: testinfra

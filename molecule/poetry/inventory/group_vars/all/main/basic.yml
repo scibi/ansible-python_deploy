@@ -1,0 +1,11 @@
+---
+test__app_name: 'test_poetry'
+test__version: 'main'
+
+test__user: '{{ test__app_name }}'
+test__group: '{{ test__user }}'
+
+test__python: 'python3.7'
+
+test__path_root: '{{ ansible_local.fhs.app + "/" + test__app_name }}'
+test__path_app: '{{ test__path_root + "/" + python_deploy__default_dir_app }}'

@@ -10,3 +10,8 @@
 # {{ item.name }} is disabled
 {%   endif %}
 {% endfor %}
+
+{% if python_deploy__type == 'git_with_poetry' %}
+# Poetry installed with Ansible
+PATH="$HOME/.poetry/bin/:$PATH"
+{% endif %}

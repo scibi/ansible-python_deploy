@@ -4,6 +4,16 @@
 python_deploy__allowed_types:
   - 'pypi'
   - 'git_without_setup'
+  - 'git_with_poetry'
+  - 'git_with_setup'
+
+python_deploy__poetry_install_method_allowed_types:
+  - 'installer'
+  - 'pip'
+
+python_deploy__git_checkout_types:
+  - 'git_without_setup'
+  - 'git_with_poetry'
   - 'git_with_setup'
 
 python_deploy__environment_venv:

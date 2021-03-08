@@ -1,0 +1,37 @@
+---
+stages:
+  - test
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.pip"
+  GIT_STRATEGY: clone
+
+cache:
+  paths:
+    - .pip/
+    - venv/
+
+before_script:
+  - python -V
+  - pip install virtualenv
+  - virtualenv venv
+  - source venv/bin/activate
+  - pip install -r requirements.txt
+  - ansible --version
+  - molecule --version
+  - docker --version
+
+test:deploy-git-with-setup:
+  stage: test
+  tags:
+    - molecule-job
+  script:
+    - molecule test
+
+# TODO:
+#test:deploy-poetry:
+#  stage: test
+#  tags:
+#    - molecule-job
+#  script:
+#    - echo "Success"
