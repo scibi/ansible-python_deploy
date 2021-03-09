@@ -4,6 +4,7 @@
 # Dopuszczalne typy:
 # pypi               - pakiet instalowany bezpośrednio z pypi
 # git_without_setup  - pakiet instalowany z gita, przeznaczony do uruchamiania w miejscu
+# git_with_poetry    - pakiet instalowany z gita, przeznaczony do uruchamiania w miejscu z poetry
 # git_with_setup     - pakiet instalowany z gita, odpalany jest setup.py
 
 python_deploy__type: False
@@ -20,7 +21,7 @@ python_deploy__group: '{{ python_deploy__name }}'
 # python3.5
 # python3.7
 # pypy
-python_deploy__python: 'python2.7'
+python_deploy__python: 'python3.7'
 
 # Dla typu pypi
 python_deploy__pypi_package_name: '{{ python_deploy__name }}'
@@ -28,7 +29,7 @@ python_deploy__pypi_package_name: '{{ python_deploy__name }}'
 # Dla typu git_without_setup
 python_deploy__requirements_files: [ 'requirements.txt' ]
 
-python_deploy__upgrade_pip: False
+python_deploy__upgrade_pip: True
 
 
 python_deploy__default_notify:

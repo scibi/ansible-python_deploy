@@ -1,0 +1,29 @@
+---
+language: python
+python:
+  - "3.7"
+services:
+  - docker
+install:
+  - pip install -r requirements.txt
+script:
+  - molecule --version
+  - ansible --version
+  - molecule test
+
+stages:
+  - Molecule
+
+jobs:
+  include:
+    - stage: "Molecule"
+      name: "Git without setup"
+      script:
+        - molecule --version
+        - ansible --version
+        - molecule test -s default
+#    - name: "Git with Poetry"
+#      script:
+#        - molecule --version
+#        - ansible --version
+#        - molecule test -s poetry
