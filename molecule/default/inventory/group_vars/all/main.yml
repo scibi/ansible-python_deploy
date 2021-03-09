@@ -6,10 +6,6 @@ python_deploy__type: 'git_without_setup'
 python_deploy__name: 'test'
 python_deploy__version: 'main'
 
-# System user
-python_deploy__user: '{{ python_deploy__name }}'
-python_deploy__group: '{{ python_deploy__name }}'
-
 # System requirements
 python_deploy__apt_packages:
   - name: 'libssl-dev'
@@ -27,15 +23,6 @@ python_deploy__services:
       - '-c gunicorn.conf.py'
       - 'wsgi:app'
     working_directory: '{{ python_deploy__path_app }}'
-
-# Application deployment
-python_deploy__requirements_files:
-  - 'requirements.txt'
-python_deploy__upgrade_pip: True
-
-python_deploy__python: 'python3.7'
-python_deploy__path_root: '{{ ansible_local.fhs.app + "/" + python_deploy__name }}'
-python_deploy__path_app: '{{ python_deploy__path_root + "/" + python_deploy__default_dir_app }}'
 
 # Git settings
 python_deploy__git_service_host: 'github.com'
