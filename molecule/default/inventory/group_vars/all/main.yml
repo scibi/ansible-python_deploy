@@ -1,23 +1,43 @@
 ---
+# Deployment type
 python_deploy__type: 'git_without_setup'
-python_deploy__name: '{{ test__app_name }}'
-python_deploy__version: '{{ test__version }}'
 
-python_deploy__user: '{{ test__user }}'
-python_deploy__group: '{{ test__group }}'
+# Base config
+python_deploy__name: 'test'
+python_deploy__version: 'main'
 
-python_deploy__dependent_apt_packages:
-  - '{{ test__python_deploy__dependent_apt_packages }}'
-python_deploy__dependent_services:
-  - '{{ test__python_deploy__dependent_services }}'
+# System user
+python_deploy__user: '{{ python_deploy__name }}'
+python_deploy__group: '{{ python_deploy__name }}'
 
-python_deploy__requirements_files: '{{ test__requirements_files }}'
+# System requirements
+python_deploy__apt_packages:
+  - name: 'libssl-dev'
+  - name: 'curl'
+  - name: 'procps'
+
+# Application services
+python_deploy__services:
+  - name: 'test-webserver'
+    decription: 'Test webserver'
+    state: 'present'
+    type: 'custom_command'
+    command: 'gunicorn'
+    command_options:
+      - '-c gunicorn.conf.py'
+      - 'wsgi:app'
+    working_directory: '{{ python_deploy__path_app }}'
+
+# Application deployment
+python_deploy__requirements_files:
+  - 'requirements.txt'
 python_deploy__upgrade_pip: True
 
-python_deploy__python: '{{ test__python }}'
-python_deploy__path_root: '{{ ansible_local.fhs.app + "/" + test__app_name }}'
-python_deploy__path_app: '{{ test__path_app }}'
+python_deploy__python: 'python3.7'
+python_deploy__path_root: '{{ ansible_local.fhs.app + "/" + python_deploy__name }}'
+python_deploy__path_app: '{{ python_deploy__path_root + "/" + python_deploy__default_dir_app }}'
 
+# Git settings
 python_deploy__git_service_host: 'github.com'
 python_deploy__git_service_account: 'rybakm'
 python_deploy__git_service_repo: 'ansible-python_deploy-test_without_setup'
