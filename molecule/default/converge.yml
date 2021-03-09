@@ -1,0 +1,28 @@
+---
+- name: Configure base directory hierarchy
+  collections: [ 'debops.debops', 'debops.roles01',
+                 'debops.roles02', 'debops.roles03' ]
+  hosts: [ 'all' ]
+  become: True
+
+  environment: '{{ inventory__environment | d({})
+                   | combine(inventory__group_environment | d({}))
+                   | combine(inventory__host_environment  | d({})) }}'
+
+  pre_tasks:
+
+    - name: Update Apt cache and install openssl-client (ssh-keygen is used before python_deploy)
+      apt:
+        name: openssh-client
+        state: present
+        update_cache: yes
+
+  roles:
+    - role: fhs
+      tags: [ 'role::fhs', 'skip::fhs' ]
+
+  post_tasks:
+
+    - name: Include ansible-python_deploy
+      include_role:
+        name: ansible-python_deploy

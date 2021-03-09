@@ -2,7 +2,7 @@
 
 # based on python_deploy__environment_venv:
 
-{% for key, value in python_deploy__environment_venv.iteritems() %}
+{% for key, value in python_deploy__environment_venv.items() %}
 {{ key }}={{ value }}
 {% endfor %}
 

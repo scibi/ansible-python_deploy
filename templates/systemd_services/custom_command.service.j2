@@ -17,7 +17,7 @@ ExecStart={{ python_deploy__path_venv}}/bin/{{ item.command }}	\
 {% endfor %}
 ExecStop=/bin/kill -s TERM $MAINPID
 
-PrivateTmp=true
+PrivateTmp={{ item.private_tmp | d("true") }}
 {% if item.restart|d(python_deploy__service_default_restart)|d(False) %}
 Restart={{ item.restart|d(python_deploy__service_default_restart) }}
 RestartSec={{ item.restart_sec|d(python_deploy__service_default_restart_sec) }}
