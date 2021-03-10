@@ -17,6 +17,7 @@ galaxy_info:
   galaxy_tags:
   - development
   - pip
+  - poetry
   - python
   - python2
   - python3
