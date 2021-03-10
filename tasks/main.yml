@@ -100,7 +100,7 @@
     - '{{ python_deploy__path_root }}/env.d'
 
 - import_tasks: git_checkout.yml
-  when: python_deploy__type in python_deploy__git_checkout_types
+  when: python_deploy__type == "git_without_setup" or python_deploy__type == "git_with_setup"
 
 - name: Install templates
   template:
