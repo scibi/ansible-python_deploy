@@ -22,8 +22,8 @@ jobs:
         - molecule --version
         - ansible --version
         - molecule test -s default
-#    - name: "Git with Poetry"
-#      script:
-#        - molecule --version
-#        - ansible --version
-#        - molecule test -s poetry
+    - name: "Git with Poetry"
+      script:
+        - molecule --version
+        - ansible --version
+        - molecule test -s poetry
