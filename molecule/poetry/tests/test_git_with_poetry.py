@@ -15,6 +15,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
         "/var/local/test/bin/setup_environment.sh",
         "/var/local/test/env.d/environment.conf",
         "/var/local/test/git",
+        "/var/local/test/venv",
         "/var/local/test/.poetry/bin/poetry",
         "/var/local/test/.cache/pypoetry",
         "/etc/systemd/system/test-webserver.service",
@@ -23,6 +24,36 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 def test_file_path(host, file_path):
     """Check if role deployed files correctly"""
     assert host.file(file_path).exists
+
+
+@pytest.mark.parametrize(
+    "param_name,expected_value",
+    [
+        ("cache-dir", "/var/local/test/.cache/pypoetry"),
+        ("experimental.new-installer", "true"),
+        ("installer.parallel", "true"),
+        ("virtualenvs.create", "false"),
+        ("virtualenvs.in-project", "null"),
+        ("virtualenvs.path", "/var/local/test/.cache/pypoetry/virtualenvs"),
+    ]
+)
+def test_poetry_configuration(host, param_name, expected_value):
+    """Check if Poetry has expected configuration"""
+    config = host.run("su - test -c '/var/local/test/.poetry/bin/poetry config %s'", param_name)
+    assert expected_value == config.stdout.strip()
+
+
+@pytest.mark.parametrize(
+    "file",
+    [
+        "bottle-0.12.19.dist-info",
+        "gunicorn-20.0.4.dist-info",
+        "setproctitle-1.2.2.dist-info"
+    ]
+)
+def test_poetry_installed_requirements(host, file):
+    """Check if Poetry installed requirements in application virtualenv"""
+    assert host.file("/var/local/test/venv/lib/python3.7/site-packages/" + file).exists
 
 
 def test_user(host):
@@ -52,20 +83,8 @@ def test_running_services(host):
     assert service.is_enabled
 
 
-# def test_service_uses_venv(host):
-#     """Check if gunicorn process runs as expected."""
-#     master = host.process.get(user="test_with_poetry", comm="gunicorn")
-#     assert master is not None
-#     assert (
-#         "/var/local/test_without_setup/.poetry/bin -c gunicorn.conf.py wsgi.py"
-#         in master.args
-#     )
-#     workers = host.process.filter(ppid=master.pid)
-#     assert len(workers) == 4
-
-
 def test_webserver_response(host):
     """Check if webserver returns correct response."""
-    cmd = host.run("curl -v http://127.0.0.1:8000")
+    cmd = host.run("curl http://127.0.0.1:8000 --verbose")
     assert cmd.succeeded
-    assert "HTTP/1.1 200 OK" in cmd.stdout
+    assert "OK" == cmd.stdout
