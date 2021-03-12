@@ -135,8 +135,11 @@
     {%- if python_deploy__poetry_version != "latest" -%}
       =={{ python_deploy__poetry_version }}
     {%- endif -%}
-  register: pipx_install_result
-  changed_when: '"Not installing to existing directory" in pipx_install_result.stdout'
+  register: python_deploy__register_pipx
+  failed_when: |
+    python_deploy__register_pipx.rc > 0
+    and not ("Not installing to existing directory" in python_deploy__register_pipx.stdout)
+  changed_when: '"Not installing to existing directory" in python_deploy__register_pipx.stdout'
 
 - name: 'Install Python package ({{ python_deploy__pypi_package_name }})'
   pip:
