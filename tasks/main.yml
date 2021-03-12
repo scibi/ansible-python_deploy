@@ -164,20 +164,18 @@
   become: yes
   become_user: '{{ python_deploy__user }}'
   when: python_deploy__type == "git_with_poetry"
-  environment:
-    PATH: $HOME/.local/pipx/venvs/poetry/bin:$PATH
   block:
   - name: Check if Poetry is configured to use existing env
-    shell: poetry config virtualenvs.create
+    shell: '{{python_deploy__poetry_install_path}}/bin/poetry config virtualenvs.create'
     register: poetry_virtualenvs_create
     changed_when: False
 
   - name: 'Configure Poetry to use existing python env'
-    shell: poetry config virtualenvs.create false
+    shell: '{{python_deploy__poetry_install_path}}/bin/poetry config virtualenvs.create false'
     when: poetry_virtualenvs_create.stdout == 'true'
 
   - name: Install requirements with Poetry
-    shell: poetry install --no-root --no-dev
+    shell: '{{python_deploy__poetry_install_path}}/bin/poetry install --no-root --no-dev'
     args:
       chdir: '{{ python_deploy__path_app }}'
     register: poetry_install
