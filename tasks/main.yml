@@ -139,7 +139,7 @@
   failed_when: >
     (python_deploy__register_pipx.rc > 0) and
     ("Not installing to existing directory" not in python_deploy__register_pipx.stdout)
-  changed_when: "Not installing to existing directory" in python_deploy__register_pipx.stdout
+  changed_when: '"Not installing to existing directory" in python_deploy__register_pipx.stdout'
 
 - name: 'Install Python package ({{ python_deploy__pypi_package_name }})'
   pip:
