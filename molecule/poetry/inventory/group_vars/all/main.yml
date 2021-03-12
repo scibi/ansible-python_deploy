@@ -1,7 +1,6 @@
 ---
 # Deployment type
-python_deploy__type: 'git_without_setup'
-python_deploy__use_poetry: True
+python_deploy__type: 'git_with_poetry'
 
 # Base config
 python_deploy__name: 'test'

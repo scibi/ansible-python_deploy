@@ -41,6 +41,10 @@ python_deploy__default_apt_packages:
     state: '{{ "present" if python_deploy__python == "pypy" else "ignore" }}'
   - name: 'pypy-dev'
     state: '{{ "present" if python_deploy__python == "pypy" else "ignore" }}'
+  - name: 'python3-venv'
+    state: '{{ "present" if python_deploy__type == "git_with_poetry" else "ignore" }}'
+  - name: 'pipx'
+    state: '{{ "present" if python_deploy__type == "git_with_poetry" else "ignore" }}'
                                                                    # ]]]
 # .. envvar:: python_deploy__apt_packages [[[
 #

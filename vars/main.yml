@@ -5,6 +5,7 @@ python_deploy__allowed_types:
   - 'pypi'
   - 'git_without_setup'
   - 'git_with_setup'
+  - 'git_with_poetry'
 
 python_deploy__environment_venv:
   VIRTUAL_ENV: '{{ python_deploy__path_venv }}'

@@ -16,7 +16,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
         "/var/local/test/env.d/environment.conf",
         "/var/local/test/git",
         "/var/local/test/venv",
-        "/var/local/test/.poetry/bin/poetry",
+        "/var/local/test/.local/pipx/venv/poetry/bin/poetry",
         "/var/local/test/.cache/pypoetry",
         "/etc/systemd/system/test-webserver.service",
     ],

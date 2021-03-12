@@ -71,7 +71,6 @@
     comment: '{{ python_deploy__name }}'
     generate_ssh_key: True
     append: True
-    groups: sudo
     system: True
     state: 'present'
 
@@ -100,7 +99,7 @@
     - '{{ python_deploy__path_root }}/env.d'
 
 - import_tasks: git_checkout.yml
-  when: python_deploy__type == "git_without_setup" or python_deploy__type == "git_with_setup"
+  when: python_deploy__type in ["git_without_setup", "git_with_setup", "git_with_poetry"]
 
 - name: Install templates
   template:
@@ -118,9 +117,6 @@
     state: 'present'
     install_recommends: False
 
-- import_tasks: poetry_install.yml
-  when: python_deploy__use_poetry
-
 - name: Upgrade pip if needed
   pip:
     name: 'pip'
@@ -129,6 +125,18 @@
     virtualenv_python: '{{ python_deploy__python }}'
   become: yes
   become_user: '{{ python_deploy__user }}'
+
+- name: Install Poetry with pipx
+  become: yes
+  become_user: '{{ python_deploy__user }}'
+  when: python_deploy__type == 'git_with_poetry'
+  shell: >
+    pipx install poetry
+    {%- if python_deploy__poetry_version != "latest" -%}
+      =={{ python_deploy__poetry_version }}
+    {%- endif -%}
+  register: pipx_install_result
+  changed_when: '"Not installing to existing directory" in pipx_install_result.stdout'
 
 - name: 'Install Python package ({{ python_deploy__pypi_package_name }})'
   pip:
@@ -149,13 +157,15 @@
   become: yes
   become_user: '{{ python_deploy__user }}'
   with_items: '{{ python_deploy__requirements_files }}'
-  when: python_deploy__type == "git_without_setup" and not python_deploy__use_poetry
+  when: python_deploy__type == "git_without_setup"
   notify: '{{ python_deploy__combined_notify if python_deploy__combined_notify|d() else omit }}'
 
 - name: Install requirements with Poetry
   become: yes
   become_user: '{{ python_deploy__user }}'
-  when: python_deploy__type == "git_without_setup" and python_deploy__use_poetry
+  when: python_deploy__type == "git_with_poetry"
+  environment:
+    PATH: $HOME/.local/pipx/venvs/poetry/bin:$PATH
   block:
   - name: Check if Poetry is configured to use existing env
     shell: '{{ python_deploy__poetry_install_path }}/bin/poetry config virtualenvs.create'
