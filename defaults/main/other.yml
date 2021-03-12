@@ -32,8 +32,6 @@ python_deploy__requirements_files: [ 'requirements.txt' ]
 python_deploy__upgrade_pip: True
 
 # Dla projektów używających poetry
-python_deploy__poetry_installer_url: 'https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py'
-python_deploy__poetry_install_path: '{{ python_deploy__path_root }}/.poetry'
 python_deploy__poetry_version: 'latest'
 
 python_deploy__default_notify:
