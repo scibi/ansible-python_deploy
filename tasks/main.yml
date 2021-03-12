@@ -165,7 +165,7 @@
   become_user: '{{ python_deploy__user }}'
   when: python_deploy__type == "git_with_poetry"
   environment:
-    - PATH: $HOME/.local/pipx/venvs/poetry/bin:$PATH
+    PATH: $HOME/.local/pipx/venvs/poetry/bin:$PATH
   block:
   - name: Check if Poetry is configured to use existing env
     shell: poetry config virtualenvs.create
@@ -182,7 +182,7 @@
       chdir: '{{ python_deploy__path_app }}'
     register: poetry_install
     environment:
-      - VIRTUAL_ENV: '{{ python_deploy__path_venv }}'
+      VIRTUAL_ENV: '{{ python_deploy__path_venv }}'
     changed_when: '"No dependencies to install or update" not in poetry_install.stdout'
     notify: '{{ python_deploy__combined_notify if python_deploy__combined_notify|d() else omit }}'
 
