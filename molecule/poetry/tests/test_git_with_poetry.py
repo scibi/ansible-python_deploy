@@ -16,7 +16,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
         "/var/local/test/env.d/environment.conf",
         "/var/local/test/git",
         "/var/local/test/venv",
-        "/var/local/test/.local/pipx/venv/poetry/bin/poetry",
+        "/var/local/test/.local/pipx/venvs/poetry/bin/poetry",
         "/var/local/test/.cache/pypoetry",
         "/etc/systemd/system/test-webserver.service",
     ],
@@ -39,7 +39,7 @@ def test_file_path(host, file_path):
 )
 def test_poetry_configuration(host, param_name, expected_value):
     """Check if Poetry has expected configuration"""
-    config = host.run("su - test -c '/var/local/test/.poetry/bin/poetry config %s'", param_name)
+    config = host.run("su - test -c 'poetry config %s'", param_name)
     assert expected_value == config.stdout.strip()
 
 
