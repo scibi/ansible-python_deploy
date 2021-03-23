@@ -9,6 +9,9 @@ User={{ python_deploy__user }}
 Group={{ python_deploy__group }}
 WorkingDirectory={{ item.working_directory|d(python_deploy__path_app) }}
 EnvironmentFile={{ python_deploy__path_root }}/env.d/*.conf
+{% for opt in item.service_options|d([]) %}
+{{ opt }}
+{% endfor %}
 
 ExecStart={{ python_deploy__path_venv}}/bin/{{ item.command }}	\
 {% for opt in item.command_options|d([]) %}
