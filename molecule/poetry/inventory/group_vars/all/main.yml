@@ -1,0 +1,31 @@
+---
+# Deployment type
+python_deploy__type: 'git_with_poetry'
+
+# Base config
+python_deploy__name: 'test'
+python_deploy__version: 'main'
+
+# System requirements
+python_deploy__apt_packages:
+  - name: 'libssl-dev'
+  - name: 'curl'
+  - name: 'procps'
+
+# Application services
+python_deploy__services:
+  - name: 'test-webserver'
+    decription: 'Test webserver'
+    state: 'present'
+    type: 'custom_command'
+    command: 'gunicorn'
+    command_options:
+      - '-c gunicorn.conf.py'
+      - 'wsgi:app'
+    working_directory: '{{ python_deploy__path_app }}'
+
+# Git settings
+python_deploy__git_service_host: 'github.com'
+python_deploy__git_service_account: 'rybakm'
+python_deploy__git_service_repo: 'ansible-python_deploy-test_poetry'
+python_deploy__git_service_access_token: None

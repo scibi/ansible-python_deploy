@@ -6,3 +6,6 @@
 {{ key }}={{ value }}
 {% endfor %}
 
+{% if python_deploy__type == 'git_with_poetry' %}
+PATH=$HOME/.local/pipx/venvs/poetry/bin:$PATH
+{% endif %}

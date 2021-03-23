@@ -99,7 +99,7 @@
     - '{{ python_deploy__path_root }}/env.d'
 
 - import_tasks: git_checkout.yml
-  when: python_deploy__type == "git_without_setup" or python_deploy__type == "git_with_setup"
+  when: python_deploy__type in ["git_without_setup", "git_with_setup", "git_with_poetry"]
 
 - name: Install templates
   template:
@@ -126,6 +126,21 @@
   become: yes
   become_user: '{{ python_deploy__user }}'
 
+- name: Install Poetry with pipx
+  become: yes
+  become_user: '{{ python_deploy__user }}'
+  when: python_deploy__type == 'git_with_poetry'
+  shell: >
+    pipx install poetry
+    {%- if python_deploy__poetry_version != "latest" -%}
+      =={{ python_deploy__poetry_version }}
+    {%- endif -%}
+  register: python_deploy__register_pipx
+  failed_when: >
+    (python_deploy__register_pipx.rc > 0) and
+    ("Not installing to existing directory" not in python_deploy__register_pipx.stderr)
+  changed_when: '"Not installing to existing directory" in python_deploy__register_pipx.stdout'
+
 - name: 'Install Python package ({{ python_deploy__pypi_package_name }})'
   pip:
     name: '{{ python_deploy__pypi_package_name }}'
@@ -137,7 +152,7 @@
   when: python_deploy__type == "pypi"
   notify: '{{ python_deploy__combined_notify if python_deploy__combined_notify|d() else omit }}'
 
-- name: 'Install requirements'
+- name: Install requirements with pip
   pip:
     requirements: '{{ python_deploy__path_app }}/{{ item }}'
     virtualenv: '{{ python_deploy__path_venv }}'
@@ -147,6 +162,31 @@
   with_items: '{{ python_deploy__requirements_files }}'
   when: python_deploy__type == "git_without_setup"
   notify: '{{ python_deploy__combined_notify if python_deploy__combined_notify|d() else omit }}'
+
+- name: Install requirements with Poetry
+  become: yes
+  become_user: '{{ python_deploy__user }}'
+  when: python_deploy__type == "git_with_poetry"
+  block:
+  - name: Check if Poetry is configured to use existing env
+    shell: '{{python_deploy__poetry_install_path}}/bin/poetry config virtualenvs.create'
+    register: poetry_virtualenvs_create
+    changed_when: False
+
+  - name: 'Configure Poetry to use existing python env'
+    shell: '{{python_deploy__poetry_install_path}}/bin/poetry config virtualenvs.create false'
+    when: poetry_virtualenvs_create.stdout == 'true'
+
+  - name: Install requirements with Poetry
+    shell: '{{python_deploy__poetry_install_path}}/bin/poetry install --no-root --no-dev'
+    args:
+      chdir: '{{ python_deploy__path_app }}'
+    register: poetry_install
+    environment:
+      VIRTUAL_ENV: '{{ python_deploy__path_venv }}'
+    changed_when: '"No dependencies to install or update" not in poetry_install.stdout'
+    notify: '{{ python_deploy__combined_notify if python_deploy__combined_notify|d() else omit }}'
+
 
 #- name: Install Python packages
 #  pip:

@@ -31,6 +31,9 @@ python_deploy__requirements_files: [ 'requirements.txt' ]
 
 python_deploy__upgrade_pip: True
 
+# Dla projektów używających poetry
+python_deploy__poetry_install_path: '{{ python_deploy__path_root }}/.local/pipx/venvs/poetry'
+python_deploy__poetry_version: 'latest'
 
 python_deploy__default_notify:
   - 'Restart python services'
