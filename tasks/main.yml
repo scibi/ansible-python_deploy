@@ -2,38 +2,45 @@
 # .. vim: foldmarker=[[[,]]]:foldmethod=marker
 
 - import_role:
-    name: 'ansible_plugins'
+    name: 'debops.debops.ansible_plugins'
 
 - import_role:
-    name: 'secret'
+    name: 'debops.debops.secret'
 
 - name: test python_deploy__combined_apt_packages
   debug:
     msg: '{{ python_deploy__combined_apt_packages }}'
+  when: 'python_deploy__debug_enabled | default(False)'
 
 - name: test python_deploy__combined_apt_packages
   debug:
     msg: '{{ python_deploy__combined_apt_packages | parse_kv_items | map(attribute="name") | list }}'
+  when: 'python_deploy__debug_enabled | default(False)'
 
 - name: test python_deploy__combined_app_environment
   debug:
     msg: '{{ python_deploy__combined_app_environment }}'
+  when: 'python_deploy__debug_enabled | default(False)'
 
 - name: test python_deploy__combined_app_environment + parse_kv_items
   debug:
     msg: '{{ python_deploy__combined_app_environment | parse_kv_items }}'
+  when: 'python_deploy__debug_enabled | default(False)'
 
 - name: test python_deploy__dependent_services
   debug:
     msg: '{{ python_deploy__dependent_services }}'
+  when: 'python_deploy__debug_enabled | default(False)'
 
 - name: test python_deploy__combined_services
   debug:
     msg: '{{ python_deploy__combined_services }}'
+  when: 'python_deploy__debug_enabled | default(False)'
 
 - name: test python_deploy__combined_services + parse_kv_items
   debug:
     msg: '{{ python_deploy__combined_services | parse_kv_items }}'
+  when: 'python_deploy__debug_enabled | default(False)'
 
 #- fail:
 #    msg: Debugowanie
