@@ -28,6 +28,9 @@ python_deploy__default_apt_packages:
 
   - name: 'virtualenv'
   - name: 'python-pip'
+    state: '{{ "present" if python_deploy__python == "python2.7" else "ignore" }}'
+  - name: 'python3-pip'
+    state: '{{ "present" if python_deploy__python == "python3.9" else "ignore" }}'
   - name: 'build-essential'
   - name: 'python2.7-dev'
     state: '{{ "present" if python_deploy__python == "python2.7" else "ignore" }}'
@@ -37,6 +40,8 @@ python_deploy__default_apt_packages:
     state: '{{ "present" if python_deploy__python == "python3.5" else "ignore" }}'
   - name: 'python3.7-dev'
     state: '{{ "present" if python_deploy__python == "python3.7" else "ignore" }}'
+  - name: 'python3.9-dev'
+    state: '{{ "present" if python_deploy__python == "python3.9" else "ignore" }}'
   - name: 'pypy'
     state: '{{ "present" if python_deploy__python == "pypy" else "ignore" }}'
   - name: 'pypy-dev'
